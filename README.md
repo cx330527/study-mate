@@ -22,7 +22,7 @@ React + TypeScript + Vinext，服务端运行于 Cloudflare Workers / Sites。�
 浏览器 localStorage：任务、专注记录和计时状态
 ```
 
-AI 密钥不进入浏览器、GitHub 仓库或构建后的客户端文件。源代码可以公开，带有个人 API 密钥的托管实例默认仅所有者访问。
+AI 密钥不进入浏览器、GitHub 仓库或构建后的客户端文件。网页与源代码可以公开。AI 问答和 AI 计划只允许站主账号使用；匿名访客和其他已登录用户均不能消耗站主 API 额度。站主身份通过服务端 Secret `STUDY_OWNER_EMAIL` 校验，此值不发到浏览器。
 
 ## 本地运行
 
@@ -40,12 +40,13 @@ npm run dev
 ```text
 DEEPSEEK_API_KEY=在本机填入自己的密钥
 DEEPSEEK_MODEL=deepseek-flash
+STUDY_OWNER_EMAIL=你的站主登录账号邮箱
 ```
 
 不要把真实值填进 `.env.example`，也不要为密钥添加 `NEXT_PUBLIC_` 前缀。托管部署应使用平台的服务器 Secret 设置，不上传本地密钥文件。
 
 ```text
-node --test tests/study.test.mjs
+node --test tests/*.test.mjs
 npx tsc --noEmit
 npm run build
 ```
@@ -71,7 +72,7 @@ AI 回答可能有误，应结合教材核对。AI 计划先经过格式校验�
 
 ## 发布
 
-项目保留 Sites 的构建集成。第一次部署时创建自己的 Site，并使用平台工具绑定自己的项目 ID；不要使用他人的 Site ID。生产实例保持所有者私有访问，API 路由还会再次核对登录身份和同源请求。开放访问前应增加持久化额度管理和用户授权策略。
+项目保留 Sites 的构建集成。第一次部署时创建自己的 Site，并使用平台工具绑定自己的项目 ID；不要使用他人的 Site ID。生产网页允许公开访问，API 路由会核对站主身份和同源请求。任务、日历、专注和本地备份向访客开放。只有站主登录后可以使用 AI；访客数据保存在各自浏览器。不要移除服务端站主校验后直接开放个人付费 API。
 
 接口限制为每个用户、每个运行实例一分钟十次请求，并限制输入和输出长度。这是基础防护，不是账户级费用上限；如需费用上限，请使用模型服务商提供的预算功能。
 
